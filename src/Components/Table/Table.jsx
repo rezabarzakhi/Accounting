@@ -9,13 +9,12 @@ import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
   DataGrid,
+  GridToolbarExport,
   GridToolbarContainer,
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
 import TotalPriceCard from "../TotalPriceCard/TotalPriceCard";
-
-
 
 const initialRows = [
   {
@@ -32,33 +31,34 @@ const initialRows = [
   },
 ];
 
-function EditToolbar(props) {
-  const { setRows, setRowModesModel } = props;
-
-  const handleAddRecord = () => {
-    const id = rows.length + 1;
-    setRows((oldRows) => [...oldRows, { id, ProductName: "", Quantity: "" ,Price : "", isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
-    }));
-  };
-
-  return (
-    <GridToolbarContainer>
-      <Button
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAddRecord}>
-        Add record
-      </Button>
-    </GridToolbarContainer>
-  );
-}
-
-export default function FullFeaturedCrudGrid() {
+export default function FullFeaturedCrudGrid({ language }) {
   const [rows, setRows] = React.useState(initialRows);
   const [rowModesModel, setRowModesModel] = React.useState({});
+
+  function EditToolbar(props) {
+    const { setRows, setRowModesModel } = props;
+
+    const handleAddRecord = () => {
+      const id = rows.length + 1;
+      setRows((oldRows) => [...oldRows, { id, ProductName: "", Quantity: "", Price: "", isNew: true }]);
+      setRowModesModel((oldModel) => ({
+        ...oldModel,
+        [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+      }));
+    };
+
+    return (
+      <GridToolbarContainer>
+        <Button
+          color="primary"
+          startIcon={<AddIcon className={language == "fa" && "mx-1"} />}
+          onClick={handleAddRecord}>
+          {language == "fa" ? "اضافه کردن محصول" : "Add Product"}
+        </Button>
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
+  }
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -107,17 +107,17 @@ export default function FullFeaturedCrudGrid() {
       headerName: "Quantity",
       type: "number",
       width: 80,
-      align: "left",
-      headerAlign: "left",
+      align: "center",
+      headerAlign: "center",
       editable: true,
     },
     {
       field: "Price",
-      headerName: "Price",
+      headerName: "Price (Toman)",
       type: "number",
-      width: 80,
-      align: "left",
-      headerAlign: "left",
+      width: 180,
+      align: "center",
+      headerAlign: "center",
       editable: true,
     },
 
@@ -201,7 +201,7 @@ export default function FullFeaturedCrudGrid() {
         }}
         slotProps={{
           toolbar: { setRows, setRowModesModel },
-          footer : {rows}
+          footer: { rows },
         }}
       />
     </Box>
